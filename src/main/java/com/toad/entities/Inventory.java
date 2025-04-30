@@ -58,6 +58,6 @@ public class Inventory {
     return existe;
   }
   public void setExiste(Boolean existe){
-    this.existe = existe;
+    this.existe = true;
   }
 }
