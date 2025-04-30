@@ -32,23 +32,27 @@ public class InventoryController {
     public @ResponseBody String addNewInventory(
             @RequestParam Integer film_id,
             @RequestParam Integer store_id,
-            @RequestParam java.sql.Timestamp last_update) {
-
-        Inventory inventory = new Inventory();
-        Integer inventoryCount = (int) inventoryRepository.count() + 1;
-        inventory.setInventoryId(inventoryCount);
-        inventory.setFilmId(film_id);
-        inventory.setStoreId(store_id);
-        inventory.setLastUpdate(last_update);
-
-        inventoryRepository.save(inventory);
-        return "Inventaire Sauvegardé : " + inventoryCount;
+            @RequestParam Integer quantite,
+            @RequestParam java.sql.Timestamp last_update,
+            @RequestParam Boolean existe) {
+    
+        int countBefore = (int) inventoryRepository.count();
+        int inserted = 0;
+    
+        for (int i = 0; i < quantite; i++) {
+            Inventory inventory = new Inventory();
+            inventory.setInventoryId(countBefore + inserted + 1); // ID unique pour chaque ligne
+            inventory.setFilmId(film_id);
+            inventory.setStoreId(store_id);
+            inventory.setLastUpdate(last_update);
+            inventory.setExiste(existe); 
+            
+            inventoryRepository.save(inventory);
+            inserted++;
+        }
+    
+        return inserted + " exemplaire(s) ajouté(s) pour le film ID : " + film_id;
     }
-
-    // film_id:1
-    // store_id:1
-    // last_update:2024-01-01 00:00:00.0
-
 
     @GetMapping(path = "/all")
     public @ResponseBody Iterable<Inventory> getAllInventories() {
